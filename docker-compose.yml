@@ -1,0 +1,24 @@
+version: '3'
+services:
+  sonic:
+    image: valeriansaliou/sonic:v1.2.0
+    volumes:
+      - ./sonic/config.cfg:/etc/sonic.cfg
+  api:
+    build: ./api
+    ports: 
+      - "3001:3001"
+    volumes:
+      - ./api:/usr/src/app
+    links:
+      - sonic
+    command: bash -c "cargo watch -x run"
+  web:
+    build: ./web
+    volumes:
+      - ./web:/usr/src/app
+    ports:
+      - "3000:3000"
+    command: bash -c "yarn && yarn start"
+    links:
+      - api
